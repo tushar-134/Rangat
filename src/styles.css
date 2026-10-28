@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", sans-serif;
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-devanagari: "Noto Serif Devanagari", serif;
+  --color-rangat-cream: #f0dfc0;
+  --color-rangat-terracotta: #c49a78;
+  --color-rangat-sage: #87947a;
+  --color-rangat-maroon: #7a1c1c;
+}
+
+:root { font-family: "DM Sans", sans-serif; color: #4a211c; background: #f0dfc0; font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; font-optical-sizing: auto; font-weight: 400; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; min-width: 320px; min-height: 100vh; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+::selection { background: #a34532; color: #fff9ee; }
+.font-display { font-family: "Playfair Display", Georgia, serif; }
+.font-devanagari { font-family: "Noto Serif Devanagari", "Playfair Display", serif; }
+.nav-link { position: relative; color: #725e4c; }
+.nav-link::after { position: absolute; content: ""; left: 0; right: 100%; bottom: -8px; height: 1px; background: #7a1c1c; transition: right .25s ease; }
+.nav-link:hover, .nav-link-active { color: #7a1c1c; }
+.nav-link:hover::after, .nav-link-active::after { right: 0; }
+.rangat-header-logo { object-position: center 43%; border: 1px solid #a9673e; box-shadow: 0 2px 8px #6a462020; }
+.arch-photo { position: relative; border-radius: 48% 48% 1.4rem 1.4rem / 24% 24% 1.4rem 1.4rem; }
+.hero-photo img { filter: saturate(.88) sepia(.08); object-position: center 55%; }
+.dish-photo img { transition: transform .55s cubic-bezier(.2,.75,.25,1); }
+.dish-card:hover .dish-photo img { transform: scale(1.055); }
+.courier { transition: left 900ms cubic-bezier(.2,.75,.2,1); animation: courier-bob 1.6s ease-in-out infinite; }
+@keyframes courier-bob { 0%,100% { margin-top: -1px; } 50% { margin-top: -6px; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
+@media print {
+  @page { size: A4; margin: 12mm; }
+  body, #root { background: #fff !important; }
+  header, .print\:hidden { display: none !important; }
+  .qr-print-card { break-inside: avoid; page-break-inside: avoid; }
+  .qr-print-card a { color: #222 !important; text-decoration: none; }
+}
