@@ -1,7 +1,9 @@
 import 'dotenv/config'
 import crypto from 'node:crypto'
 import mongoose from 'mongoose'
-import { Restaurant, Category, Dish, Table } from './models.js'
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+import { Restaurant, Category, Dish, Table, User } from './models.js'
 import { categories, dishes } from '../src/data.js'
 
 const hash = value => crypto.createHash('sha256').update(value).digest('hex')
@@ -51,11 +53,22 @@ try {
   }
 
   for (let number = 1; number <= 20; number += 1) {
-    const token = crypto.randomBytes(32).toString('hex')
+    const label = String(number)
+    const token = jwt.sign({ restaurantId: String(restaurant._id), table: label }, process.env.JWT_SECRET, { issuer: 'rangat', audience: 'rangat-table', noTimestamp: true })
     await Table.updateOne(
-      { restaurantId: restaurant._id, label: String(number) },
-      { $setOnInsert: { restaurantId: restaurant._id, label: String(number), qrTokenHash: hash(token), active: true } },
+      { restaurantId: restaurant._id, label },
+      { $set: { qrTokenHash: hash(token), active: true }, $setOnInsert: { restaurantId: restaurant._id, label } },
       { upsert: true },
+    )
+  }
+
+  if (process.env.OWNER_EMAIL && process.env.OWNER_PASSWORD) {
+    const email = process.env.OWNER_EMAIL.toLowerCase()
+    const passwordHash = await bcrypt.hash(process.env.OWNER_PASSWORD, 12)
+    await User.findOneAndUpdate(
+      { restaurantId: restaurant._id, email },
+      { $setOnInsert: { restaurantId: restaurant._id, name: process.env.OWNER_NAME || 'Rangat Owner', email, passwordHash, role: 'owner', active: true } },
+      { upsert: true, new: true },
     )
   }
 
@@ -66,7 +79,7 @@ try {
   ])
   console.log(`Seed complete for ${restaurant.name}: ${categoryCount} categories, ${dishCount} sample dishes, ${tableCount} tables.`)
 } catch (error) {
-  console.error('Database seed failed:', error.name)
+  console.error('Database seed failed:', error.name, error.message)
   process.exitCode = 1
 } finally {
   await mongoose.disconnect().catch(() => {})

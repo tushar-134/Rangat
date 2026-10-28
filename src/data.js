@@ -2,6 +2,7 @@ export const restaurant = {
   name: 'Rangat Café & Restaurant',
   subtitle: 'A taste of Nawalgarh · Rajasthani hospitality',
   table: typeof window === 'undefined' ? '12' : new URLSearchParams(window.location.search).get('table') || '12',
+  tableToken: typeof window === 'undefined' ? '' : new URLSearchParams(window.location.search).get('token') || '',
   location: 'Nawalgarh, Rajasthan',
   currency: '₹',
 }

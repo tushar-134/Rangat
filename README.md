@@ -13,19 +13,20 @@ The app starts in shared preview mode without MongoDB. The customer menu is at `
 
 ## MongoDB Atlas setup
 
-Put the Atlas connection URL in `MONGODB_URI` in the ignored `.env` file, set `DEMO_MODE=false`, then run `npm run db:seed` once. The idempotent seed creates the Rangat restaurant, the illustrative sample menu, and 20 tables; replace sample menu entries with the restaurant's approved menu when available. The app health endpoint should then report `database: connected`. Restrict Atlas network access to the API host where possible and use a database user with access only to this application's database. Never put this URL in React environment variables or commit `.env`.
+Put the Atlas connection URL in `MONGODB_URI` in the ignored `.env` file, set `DEMO_MODE=false`, configure `OWNER_EMAIL`, `OWNER_PASSWORD`, and `JWT_SECRET`, then run `npm run db:seed`. The idempotent seed creates the Rangat restaurant, owner account, illustrative sample menu, signed-token QR records for 20 tables; replace sample menu entries with the restaurant's approved menu when available. The app health endpoint should then report `database: connected`. Restrict Atlas network access to the API host where possible and use a database user with access only to this application's database. Never put the URI or secrets in React environment variables or commit `.env`.
 
 ## What is implemented
 
 - Customer menu with categories, search, vegetarian and spicy filters, dish details, ingredients and allergens.
 - Cart quantity controls, order submission, status tracking, call waiter/bill confirmation.
-- Staff order-board preview with order status transitions.
+- Staff login with signed sessions, an order board, status transitions, and table QR management.
 - Separate `/staff` order manager connected to the customer ordering flow through REST and Socket.IO.
 - Express API, MongoDB models, Socket.IO event scaffolding, input validation, helmet headers, and health endpoint.
 - Demo mode for customer-to-kitchen flow before restaurant configuration.
+- Vercel Express function entrypoint with polling for order updates where WebSockets are unavailable.
 
 ## Before a live restaurant launch
 
-The included demo dashboard is not an authenticated staff product. Add staff login/session middleware and role authorization before exposing order management. In production, generate high-entropy QR tokens per table, store only their hashes, validate the QR token for menu context and order creation, and scope customer tracking with an order access token. Add upload storage, payment provider integration if needed, backups, monitoring, and operational rate limiting. Staff order listing and status changes must be protected by staff authentication before deployment.
+Staff order reads and status changes require a signed staff session. The app currently bootstraps one owner account; add role-specific permissions, password reset, rate limiting, uploads, payment integration if needed, backups, and monitoring before a full commercial launch. Table QRs use signed, table-specific tokens, with only their hashes stored in Atlas. Customer order tracking uses an order access token.
 
 The sample menu is generic demo content and does not claim to represent a particular restaurant. Replace dishes, prices, allergens, photos, currency, and tax configuration with verified restaurant data.
