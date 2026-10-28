@@ -13,7 +13,7 @@ The app starts in shared preview mode without MongoDB. The customer menu is at `
 
 ## MongoDB Atlas setup
 
-When you share the Atlas connection URL, put it in `MONGODB_URI` in `.env`, replace the placeholder database name, and set `DEMO_MODE=false`. Restrict Atlas network access to the API host where possible and use a database user with access only to this application's database. Never put this URL in React environment variables or commit `.env`.
+Put the Atlas connection URL in `MONGODB_URI` in the ignored `.env` file, set `DEMO_MODE=false`, then run `npm run db:seed` once. The idempotent seed creates the Rangat restaurant, the illustrative sample menu, and 20 tables; replace sample menu entries with the restaurant's approved menu when available. The app health endpoint should then report `database: connected`. Restrict Atlas network access to the API host where possible and use a database user with access only to this application's database. Never put this URL in React environment variables or commit `.env`.
 
 ## What is implemented
 
